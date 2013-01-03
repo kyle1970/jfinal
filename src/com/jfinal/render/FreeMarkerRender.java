@@ -23,6 +23,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import javax.servlet.ServletContext;
+
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.MultiTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
 import freemarker.template.Template;
@@ -77,9 +81,13 @@ public class FreeMarkerRender extends Render {
         // config = new Configuration();
         // - Templates are stoted in the WEB-INF/templates directory of the Web app.
         config.setServletContextForTemplateLoading(servletContext, "/");	// "WEB-INF/templates"
+    	//add classTemplateLoader
+        TemplateLoader tl=config.getTemplateLoader();
+    	ClassTemplateLoader ctl=new ClassTemplateLoader(FreeMarkerRender.class, "/");
+    	MultiTemplateLoader multi=new MultiTemplateLoader(new TemplateLoader[]{tl,ctl});
+    	config.setTemplateLoader(multi);
         // - Set update dealy to 0 for now, to ease debugging and testing.
         //   Higher value should be used in production environment.
-        
         if (getDevMode()) {
         	config.setTemplateUpdateDelay(0);
        	}
